@@ -14,7 +14,7 @@ if [ "$1" != "" ]; then
   TARGET=$(printf "%s/%s/" "ftp://hydro1.sci.gsfc.nasa.gov/data/s4pa/NLDAS/NLDAS_FORA0125_H.002" $YEAR)
 
   # Download data
-  wget -r -nH --cut-dirs=4 -P $DATA_DIR $TARGET
+  wget -r -nH --cut-dirs=4 -P $DATA_DIR -A grb $TARGET
 else
   echo "Please specify year!"
   exit 1
