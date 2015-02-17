@@ -12,7 +12,7 @@ INSTRUCTION:
 1. Download the source files and the Makefile to your work directory. In your work directory, type `make all` to compile all executables. Two executables will be generated: `Read_NLDAS` and `wgrib`. In addition, there are two bash scripts, `download_data` and `extract_data`. 
 
 2. Download NLDAS-2 forcing data:
-   The bash script `download_data` will download a whole year''s NLDAS-2 forcing data into the Data directory.
+   The bash script `download_data` will download a whole year's NLDAS-2 forcing data into the Data directory.
    The syntax is:
 
    ~~~shell
@@ -49,7 +49,7 @@ INSTRUCTION:
    
    Note that W longitude is negative.
 
-   Alternatively, if you want to read a whole year`s forcing data, you can run
+   Alternatively, if you want to read a whole year's forcing data, you can run
   
    ~~~
    ./Read_NLDAS --year 2009 --lat 40.6125 --lon -78.1408
