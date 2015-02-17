@@ -1,7 +1,7 @@
 Read_NLDAS
 ==========
 
-Tools to download and extract NLDAS data
+Tools to download and extract NLDAS data.
 
 Contact: Yuning Shi [(Send Email)](mailto:yshi@psu.edu)
 
@@ -9,7 +9,9 @@ Contact: Yuning Shi [(Send Email)](mailto:yshi@psu.edu)
 INSTRUCTION:
 ------------
 
-1. Download the source files and the Makefile to your work directory. In your work directory, type `make all` to compile all executables. Two executables will be generated: `Read_NLDAS` and `wgrib`. In addition, there are two bash scripts, `download_data` and `extract_data`. 
+1. Download the source files and the Makefile to your work directory. In your work directory, type `make all` to compile all executables. Two executables will be generated: `Read_NLDAS` and `wgrib`. In addition, there are two bash scripts, `download_data` and `extract_data`.
+
+   [(wgrib)](http://www.cpc.ncep.noaa.gov/products/wesley/wgrib.html) is a program to manipulate, inventory and decode GRIB files. wgrib (gributil) is an operational NCEP program.
 
 2. Download NLDAS-2 forcing data:
 
