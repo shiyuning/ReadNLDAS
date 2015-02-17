@@ -190,9 +190,27 @@ int main (int argc, char *argv[])
 
     /* Open output file */
     output_file = fopen ("Data/met.dat", "w");
+    fprintf (output_file, "%-16s\t", "TIME");
+    fprintf (output_file, "%-11s\t", "PRCP");
+    fprintf (output_file, "%-6s\t", "SFCTMP");
+    fprintf (output_file, "%-5s\t", "RH");
+    fprintf (output_file, "%-6s\t", "SFCSPD");
+    fprintf (output_file, "%-6s\t", "SOLAR");
+    fprintf (output_file, "%-6s\t", "LONGWV");
+    fprintf (output_file, "%-9s\n", "PRES");
+
+    fprintf (output_file, "%-16s\t", "TS");
+    fprintf (output_file, "%-11s\t", "kg/m2/s");
+    fprintf (output_file, "%-6s\t", "K");
+    fprintf (output_file, "%-5s\t", "%");
+    fprintf (output_file, "%-6s\t", "m/s");
+    fprintf (output_file, "%-6s\t", "W/m2");
+    fprintf (output_file, "%-6s\t", "W/m2");
+    fprintf (output_file, "%-9s\n", "Pa");
 
     time_start = timegm (&timeinfo_start);
     time_end = timegm (&timeinfo_end);
+
 
     /* Find the nearest NLDAS grid */
     ind_i = rint ((lon - LO1) / DI) + 1;
