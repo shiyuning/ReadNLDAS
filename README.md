@@ -11,7 +11,8 @@ INSTRUCTION:
 
 1. Download the source files and the Makefile to your work directory. In your work directory, type `make all` to compile all executables. Two executables will be generated: `Read_NLDAS` and `wgrib`. In addition, there are two bash scripts, `download_data` and `extract_data`.
 
-   [Wgrib](http://www.cpc.ncep.noaa.gov/products/wesley/wgrib.html) is an operational NCEP program to manipulate, inventory and decode GRIB files. 
+   [Wgrib](http://www.cpc.ncep.noaa.gov/products/wesley/wgrib.html) is an operational NCEP program to manipulate, inventory and decode GRIB files.
+   The source file `wgrib.c` is downloaded from [ftp://ftp.cpc.ncep.noaa.gov/wd51we/wgrib/wgrib.c](ftp://ftp.cpc.ncep.noaa.gov/wd51we/wgrib/wgrib.c).
 
 2. Download NLDAS-2 forcing data:
 
