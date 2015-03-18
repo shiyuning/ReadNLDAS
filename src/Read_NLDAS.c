@@ -67,6 +67,11 @@ int main (int argc, char *argv[])
     double          dswrf;
     double          pres;
     double          e_s, w_s, w;
+    double	    tx, tn;
+    double	    daily_solar;
+    double	    daily_prcp;
+    double	    rhx, rhn;
+    double	    daily_wind;
 
     float           temp;
 
@@ -78,6 +83,8 @@ int main (int argc, char *argv[])
 
     int             c;
 
+    enum model	    { PIHM, CYCLES };
+    enum model	    mode;
     /*
      * Get command line options
      */
@@ -89,12 +96,13 @@ int main (int argc, char *argv[])
             {"lat",	required_argument, 0, 'c'},
             {"lon",	required_argument, 0, 'd'},
             {"year",	required_argument, 0, 'e'},
+	    {"model",	required_argument, 0, 'f'},
             {0, 0, 0, 0}
         };
         /* getopt_long stores the option index here. */
         int             option_index = 0;
 
-        c = getopt_long (argc, argv, "a:b:c:d:e:", long_options, &option_index);
+        c = getopt_long (argc, argv, "a:b:c:d:e:f:", long_options, &option_index);
 
         /* Detect the end of the options. */
         if (c == -1)
@@ -125,6 +133,17 @@ int main (int argc, char *argv[])
             case 'e':
                 sscanf (optarg, "%d", &data_year);
                 break;
+	    case 'f':
+		if (strcasecmp ("PIHM", optarg) == 0)
+		    mode = PIHM;
+		else if (strcasecmp ("CYCLES", optarg) == 0)
+		    mode = CYCLES;
+		else
+		{
+		    printf ("Model %s is not recognised\n", optarg);
+		    abort ();
+		}
+		break;
             case '?':
                 /* getopt_long already printed an error message. */
                 break;
@@ -176,6 +195,11 @@ int main (int argc, char *argv[])
     }
 
     printf ("Read NLDAS data for %lf N, %lf W, from %2.2d/%2.2d/%4.4d to %2.2d/%2.2d/%4.4d\n\n", lat, lon, timeinfo_start.tm_mon + 1, timeinfo_start.tm_mday, timeinfo_start.tm_year + 1900, timeinfo_end.tm_mon + 1, timeinfo_end.tm_mday, timeinfo_end.tm_year + 1900);
+    if (mode == PIHM)
+	printf ("Generate forcing file for PIHM.\n");
+    else if (mode == CYCLES)
+	printf ("Generate weather file for Cycles.\n");
+
     sleep (2);
 
     /* Specify names of desired NLDAS fields */
