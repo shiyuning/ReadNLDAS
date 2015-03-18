@@ -66,6 +66,7 @@ int main (int argc, char *argv[])
     double          dlwrf;
     double          dswrf;
     double          pres;
+    double	    rh;
     double          e_s, w_s, w;
     double	    tx, tn;
     double	    daily_solar;
@@ -78,6 +79,8 @@ int main (int argc, char *argv[])
     int             data_year = -999;
     int             year, month, mday;
     int             jday;
+    int		    day_counter;
+    int		    hour;
 
     FILE           *output_file;
 
@@ -194,11 +197,11 @@ int main (int argc, char *argv[])
         exit (1);
     }
 
-    printf ("Read NLDAS data for %lf N, %lf W, from %2.2d/%2.2d/%4.4d to %2.2d/%2.2d/%4.4d\n\n", lat, lon, timeinfo_start.tm_mon + 1, timeinfo_start.tm_mday, timeinfo_start.tm_year + 1900, timeinfo_end.tm_mon + 1, timeinfo_end.tm_mday, timeinfo_end.tm_year + 1900);
+    printf ("Read NLDAS data for %lf N, %lf W, from %2.2d/%2.2d/%4.4d to %2.2d/%2.2d/%4.4d\n", lat, lon, timeinfo_start.tm_mon + 1, timeinfo_start.tm_mday, timeinfo_start.tm_year + 1900, timeinfo_end.tm_mon + 1, timeinfo_end.tm_mday, timeinfo_end.tm_year + 1900);
     if (mode == PIHM)
-	printf ("Generate forcing file for PIHM.\n");
+	printf ("Generate forcing file for PIHM.\n\n");
     else if (mode == CYCLES)
-	printf ("Generate weather file for Cycles.\n");
+	printf ("Generate weather file for Cycles.\n\n");
 
     sleep (2);
 
@@ -214,23 +217,42 @@ int main (int argc, char *argv[])
 
     /* Open output file */
     output_file = fopen ("Data/met.dat", "w");
-    fprintf (output_file, "%-16s\t", "TIME");
-    fprintf (output_file, "%-11s\t", "PRCP");
-    fprintf (output_file, "%-6s\t", "SFCTMP");
-    fprintf (output_file, "%-5s\t", "RH");
-    fprintf (output_file, "%-6s\t", "SFCSPD");
-    fprintf (output_file, "%-6s\t", "SOLAR");
-    fprintf (output_file, "%-6s\t", "LONGWV");
-    fprintf (output_file, "%-9s\n", "PRES");
+    if (mode == PIHM)
+    {
+	fprintf (output_file, "%-16s\t", "TIME");
+	fprintf (output_file, "%-11s\t", "PRCP");
+	fprintf (output_file, "%-6s\t", "SFCTMP");
+	fprintf (output_file, "%-5s\t", "RH");
+	fprintf (output_file, "%-6s\t", "SFCSPD");
+	fprintf (output_file, "%-6s\t", "SOLAR");
+	fprintf (output_file, "%-6s\t", "LONGWV");
+	fprintf (output_file, "%-9s\n", "PRES");
 
-    fprintf (output_file, "%-16s\t", "TS");
-    fprintf (output_file, "%-11s\t", "kg/m2/s");
-    fprintf (output_file, "%-6s\t", "K");
-    fprintf (output_file, "%-5s\t", "%");
-    fprintf (output_file, "%-6s\t", "m/s");
-    fprintf (output_file, "%-6s\t", "W/m2");
-    fprintf (output_file, "%-6s\t", "W/m2");
-    fprintf (output_file, "%-9s\n", "Pa");
+	fprintf (output_file, "%-16s\t", "TS");
+	fprintf (output_file, "%-11s\t", "kg/m2/s");
+	fprintf (output_file, "%-6s\t", "K");
+	fprintf (output_file, "%-5s\t", "%");
+	fprintf (output_file, "%-6s\t", "m/s");
+	fprintf (output_file, "%-6s\t", "W/m2");
+	fprintf (output_file, "%-6s\t", "W/m2");
+	fprintf (output_file, "%-9s\n", "Pa");
+    }
+    else if (mode == CYCLES)
+    {
+	fprintf (output_file, "%-20s\t%-lf\n", "LATITUDE", lat);
+	fprintf (output_file, "%-20s\t%-lf\n", "ALTITUDE", 0.0);
+	fprintf (output_file, "%-20s\t10.0\n", "SCREENING_HEIGHT");
+	fprintf (output_file, "%-7s\t", "YEAR");
+	fprintf (output_file, "%-7s\t", "DOY");
+	fprintf (output_file, "%-7s\t", "PP");
+	fprintf (output_file, "%-7s\t", "TX");
+	fprintf (output_file, "%-7s\t", "TN");
+	fprintf (output_file, "%-7s\t", "SOLAR");
+	fprintf (output_file, "%-7s\t", "RHX");
+	fprintf (output_file, "%-7s\t", "RHN");
+	fprintf (output_file, "%-7s\n", "WIND");
+    }
+    fflush (output_file);
 
     time_start = timegm (&timeinfo_start);
     time_end = timegm (&timeinfo_end);
@@ -243,56 +265,97 @@ int main (int argc, char *argv[])
     ind = 1 + (ind_i - 1) + (ind_j - 1) * NI;
 
     /* Read NLDAS files */
-    for (rawtime = time_start; rawtime <= time_end; rawtime = rawtime + 60 * 60)
+    for (day_counter = time_start; day_counter <= time_end; day_counter = day_counter + 24 * 60 * 60)
     {
-        timeinfo = gmtime (&rawtime);
-        jday = timeinfo->tm_yday + 1;
+	tx = -999.0;
+	tn = 999.0;
+	daily_solar = 0.0;
+	daily_prcp = 0.0;
+	rhx = -999.0;
+	rhn = 999.0;
+	daily_wind = 0.0;
 
-        printf ("%2.2d/%2.2d/%4.4d %2.2d:00Z\n", timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_year + 1900, timeinfo->tm_hour);
+	for (rawtime = day_counter; rawtime <= day_counter + 23 * 60 * 60; rawtime = rawtime + 60 * 60)
+	{
+	    timeinfo = gmtime (&rawtime);
+	    jday = timeinfo->tm_yday + 1;
 
-        for (i = 0; i < 8; i++)
-        {
-	    /* Open input file */
-            sprintf (field[i].filename, "Data/%4.4d/%3.3d/NLDAS_FORA0125_H.A%4.4d%2.2d%2.2d.%2.2d00.002.grb.%s", timeinfo->tm_year + 1900, jday, timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, field[i].field_name);
-            field[i].input_file = fopen (field[i].filename, "rb");
-            if (field[i].input_file == NULL)
-            {
-                printf ("Error when opening %s.\n", field[i].filename);
-                exit (1);
-            }
+	    printf ("%2.2d/%2.2d/%4.4d %2.2d:00Z\n", timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_year + 1900, timeinfo->tm_hour);
 
-	    /* Skip to locate the nearest NLDAS grid */
-            fseek (field[i].input_file, (long int)((ind - 1) * 4), SEEK_SET);
-	    /* Read in forcing */
-            fread (&temp, 4L, 1, field[i].input_file);
+	    for (i = 0; i < 8; i++)
+	    {
+		/* Open input file */
+		sprintf (field[i].filename, "Data/%4.4d/%3.3d/NLDAS_FORA0125_H.A%4.4d%2.2d%2.2d.%2.2d00.002.grb.%s", timeinfo->tm_year + 1900, jday, timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, field[i].field_name);
+		field[i].input_file = fopen (field[i].filename, "rb");
+		if (field[i].input_file == NULL)
+		{
+		    printf ("Error when opening %s.\n", field[i].filename);
+		    exit (1);
+		}
 
-            field[i].value = (double)temp;
+		/* Skip to locate the nearest NLDAS grid */
+		fseek (field[i].input_file, (long int)((ind - 1) * 4), SEEK_SET);
+		/* Read in forcing */
+		fread (&temp, 4L, 1, field[i].input_file);
 
-            fclose (field[i].input_file);
-        }
+		field[i].value = (double)temp;
 
-        tmp = field[0].value;
-	/* Convert from total precipitation to precipitation rate */
-        prcp = field[1].value / 3600.;
-        wind = sqrt (field[2].value * field[2].value + field[3].value * field[3].value);
-        dlwrf = field[4].value;
-        dswrf = field[5].value;
-        pres = field[6].value;
-        spfh = field[7].value;
+		fclose (field[i].input_file);
+	    }
 
-	/* Calculate relative humidity from specific humidity */
-        e_s = 611.2 * exp (17.67 * (tmp - 273.15) / (tmp - 273.15 + 243.5));
-        w_s = 0.622 * e_s / (pres - e_s);
-        w = spfh / (1.0 - spfh);
+	    tmp = field[0].value;
+	    /* Convert from total precipitation to precipitation rate */
+	    prcp = field[1].value / 3600.;
+	    wind = sqrt (field[2].value * field[2].value + field[3].value * field[3].value);
+	    dlwrf = field[4].value;
+	    dswrf = field[5].value;
+	    pres = field[6].value;
+	    spfh = field[7].value;
 
-        fprintf (output_file, "%4.4d-%2.2d-%2.2d %2.2d:00\t", timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour);
-        fprintf (output_file, "%-11.8lf\t", prcp);
-        fprintf (output_file, "%-6.2lf\t", tmp);
-        fprintf (output_file, "%-5.2lf\t", w / w_s * 100.0);
-        fprintf (output_file, "%-5.2lf\t", wind);
-        fprintf (output_file, "%-6.2lf\t", dswrf);
-        fprintf (output_file, "%-6.2lf\t", dlwrf);
-        fprintf (output_file, "%-9.2lf\n", pres);
+	    /* Calculate relative humidity from specific humidity */
+	    e_s = 611.2 * exp (17.67 * (tmp - 273.15) / (tmp - 273.15 + 243.5));
+	    w_s = 0.622 * e_s / (pres - e_s);
+	    w = spfh / (1.0 - spfh);
+	    rh = w / w_s * 100.0;
+
+	    daily_prcp += prcp * 3600.0;
+	    if (tmp > tx)
+		tx = tmp;
+	    if (tmp < tn)
+		tn = tmp;
+	    daily_solar = daily_solar + dswrf * 3600.0 / 1.0e6;
+	    if (rh > rhx)
+		rhx = rh;
+	    if (rh < rhn)
+		rhn = rh;
+	    daily_wind = daily_wind + wind;
+    
+	    if (mode == PIHM)
+	    {
+		fprintf (output_file, "%4.4d-%2.2d-%2.2d %2.2d:00\t", timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour);
+		fprintf (output_file, "%-11.8lf\t", prcp);
+		fprintf (output_file, "%-6.2lf\t", tmp);
+		fprintf (output_file, "%-5.2lf\t", w / w_s * 100.0);
+		fprintf (output_file, "%-5.2lf\t", wind);
+		fprintf (output_file, "%-6.2lf\t", dswrf);
+		fprintf (output_file, "%-6.2lf\t", dlwrf);
+		fprintf (output_file, "%-9.2lf\n", pres);
+		fflush (output_file);
+	    }
+	}
+	if (mode == CYCLES)
+	{
+	    fprintf (output_file, "%-7.4d\t", timeinfo->tm_year + 1900);
+	    fprintf (output_file, "%-7d\t", jday);
+	    fprintf (output_file, "%-7.4lf\t", daily_prcp);
+	    fprintf (output_file, "%-7.2lf\t", tx - 273.15);
+	    fprintf (output_file, "%-7.2lf\t", tn - 273.15);
+	    fprintf (output_file, "%-7.4lf\t", daily_solar);
+	    fprintf (output_file, "%-7.2lf\t", rhx);
+	    fprintf (output_file, "%-7.2lf\t", rhn);
+	    fprintf (output_file, "%-7.3lf\n", daily_wind / 24.0);
+	    fflush (output_file);
+	}
     }
 
     return 0;
