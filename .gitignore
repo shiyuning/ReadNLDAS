@@ -1,0 +1,5 @@
+Data/
+Read_NLDAS
+src/*.o
+src/*.f90
+wgrib
