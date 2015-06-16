@@ -317,6 +317,7 @@ int main (int argc, char *argv[])
 	    w_s = 0.622 * e_s / (pres - e_s);
 	    w = spfh / (1.0 - spfh);
 	    rh = w / w_s * 100.0;
+	    rh = rh > 100.0 ? 100.0 : rh;
 
 	    daily_prcp += prcp * 3600.0;
 	    if (tmp > tx)
