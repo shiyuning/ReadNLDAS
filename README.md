@@ -17,7 +17,7 @@ INSTRUCTION:
      The bash script `download_data` will download a whole year's NLDAS-2 forcing data into the Data directory.
      The syntax is:
      ~~~shell
-     $ ./down_data YYYY
+     $ ./download_data YYYY
      ~~~
   
      `YYYY` indicates the year of data that you want to download.
