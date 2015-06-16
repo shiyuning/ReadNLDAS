@@ -44,7 +44,7 @@ INSTRUCTION:
 
    If you want to read the forcing from Jan 1 2009 to Feb 1 2009 at 40.6125N, 78.1408W and produce forcing for Cycles, you run
    ~~~
-   ./Read_NLDAS --start 2009-01-01 -end 2009-02-01 --lat 40.6125 --lon -78.1408 --model Cycles
+   ./Read_NLDAS --start 2009-01-01 --end 2009-02-01 --lat 40.6125 --lon -78.1408 --model Cycles
    ~~~
    Note that W longitude is negative.
 
