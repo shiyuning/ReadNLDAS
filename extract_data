@@ -14,7 +14,7 @@ if [ "$1" != "" ]; then
   for x in $files
     do
       echo $x
-      ./wgrib -s $x | egrep "(:APCP:|:TMP:2 m:|:SPFH:|:UGRD:|:VGRD:|:DLWRF:|:DSWRF:|:PRES:sfc:)" | ./wgrib -i -nh $x -o "$x.dat"
+      ./wgrib -v $x | egrep "(:APCP:|:SPFH:|:TMP:|:UGRD:|:VGRD:|:DLWRF:|:DSWRF:|:PRES:sfc:)" | ./wgrib -i -nh $x -o "$x.dat"
   done
 else
   echo "Please specify year!"
