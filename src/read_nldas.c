@@ -16,6 +16,9 @@
 #define NI	    464
 #define NJ	    224
 
+#define NVRBL	    8
+enum vrbl {TMP, SPFH, PRES, UGRD, VGRD, DLWRF, APCP, DSWRF};
+
 int IsLeapYear (int year)
 {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
@@ -37,15 +40,7 @@ int doy (int year, int month, int mday)
 
 int main (int argc, char *argv[])
 {
-    typedef struct data_field
-    {
-        double          value;
-        FILE           *input_file;
-        char            filename[60];
-        char            field_name[15];
-    } data_field;
-
-    data_field      field[9];
+    double	    value[NVRBL];
 
     int             ind_i, ind_j;
     int             ind;
@@ -75,6 +70,9 @@ int main (int argc, char *argv[])
     double	    daily_wind;
 
     float           temp;
+
+    char	    filename[1024];
+    FILE	   *input_file;
 
     int             data_year = -999;
     int             year, month, mday;
@@ -205,18 +203,9 @@ int main (int argc, char *argv[])
 
     sleep (2);
 
-    /* Specify names of desired NLDAS fields */
-    strcpy (field[0].field_name, "tmp");
-    strcpy (field[1].field_name, "apcp");
-    strcpy (field[2].field_name, "ugrd");
-    strcpy (field[3].field_name, "vgrd");
-    strcpy (field[4].field_name, "dlwrf");
-    strcpy (field[5].field_name, "dswrf");
-    strcpy (field[6].field_name, "pres");
-    strcpy (field[7].field_name, "spfh");
-
     /* Open output file */
-    output_file = fopen ("Data/met.dat", "w");
+    sprintf (filename, "Data/met%.4lfNx%.4lfW.txt", lat, -lon);
+    output_file = fopen (filename, "w");
     if (mode == PIHM)
     {
 	fprintf (output_file, "%-16s\t", "TIME");
@@ -282,35 +271,35 @@ int main (int argc, char *argv[])
 
 	    printf ("%2.2d/%2.2d/%4.4d %2.2d:00Z\n", timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_year + 1900, timeinfo->tm_hour);
 
-	    for (i = 0; i < 8; i++)
+	    /* Open input file */
+	    sprintf (filename, "Data/%4.4d/%3.3d/NLDAS_FORA0125_H.A%4.4d%2.2d%2.2d.%2.2d00.002.grb.dat", timeinfo->tm_year + 1900, jday, timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour);
+	    input_file = fopen (filename, "rb");
+	    if (input_file == NULL)
 	    {
-		/* Open input file */
-		sprintf (field[i].filename, "Data/%4.4d/%3.3d/NLDAS_FORA0125_H.A%4.4d%2.2d%2.2d.%2.2d00.002.grb.%s", timeinfo->tm_year + 1900, jday, timeinfo->tm_year + 1900, timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour, field[i].field_name);
-		field[i].input_file = fopen (field[i].filename, "rb");
-		if (field[i].input_file == NULL)
-		{
-		    printf ("Error when opening %s.\n", field[i].filename);
-		    exit (1);
-		}
-
-		/* Skip to locate the nearest NLDAS grid */
-		fseek (field[i].input_file, (long int)((ind - 1) * 4), SEEK_SET);
-		/* Read in forcing */
-		fread (&temp, 4L, 1, field[i].input_file);
-
-		field[i].value = (double)temp;
-
-		fclose (field[i].input_file);
+		printf ("Error when opening %s.\n", filename);
+		exit (1);
 	    }
 
-	    tmp = field[0].value;
+	    for (i = 0; i < NVRBL; i++)
+	    {
+		/* Skip to locate the nearest NLDAS grid */
+		fseek (input_file, (long int)((i * NLDAS_SIZE + ind - 1) * 4), SEEK_SET);
+		/* Read in forcing */
+		fread (&temp, 4L, 1, input_file);
+
+		value[i] = (double)temp;
+
+	    }
+	    fclose (input_file);
+
+	    tmp = value[TMP];
 	    /* Convert from total precipitation to precipitation rate */
-	    prcp = field[1].value / 3600.;
-	    wind = sqrt (field[2].value * field[2].value + field[3].value * field[3].value);
-	    dlwrf = field[4].value;
-	    dswrf = field[5].value;
-	    pres = field[6].value;
-	    spfh = field[7].value;
+	    prcp = value[APCP] / 3600.;
+	    wind = sqrt (value[UGRD] * value[UGRD] + value[VGRD] * value[VGRD]);
+	    dlwrf = value[DLWRF];
+	    dswrf = value[DSWRF];
+	    pres = value[PRES];
+	    spfh = value[SPFH];
 
 	    /* Calculate relative humidity from specific humidity */
 	    e_s = 611.2 * exp (17.67 * (tmp - 273.15) / (tmp - 273.15 + 243.5));
@@ -359,5 +348,6 @@ int main (int argc, char *argv[])
 	}
     }
 
+    fclose (output_file);
     return 0;
 }

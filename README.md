@@ -29,7 +29,7 @@ INSTRUCTION:
      ~~~
      ./ExtractData YYYY
      ~~~
-     `YYYY` indecates the year of data that you want to extract.
+     `YYYY` indicates the year of data that you want to extract.
 
 3. Read NLDAS-2 forcing inventory and build forcing file: 
 
