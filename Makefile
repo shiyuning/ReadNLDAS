@@ -5,16 +5,16 @@ SRCDIR = ./src
 LIBS = -lm
 SRCS_ = read_nldas.c
 
-EXECUTABLE = ReadNLDAS
+EXECUTABLE = read_nldas
 
 SRCS = $(patsubst %,$(SRCDIR)/%,$(SRCS_))
 OBJS = $(SRCS:.c=.o)
 
 .PHONY: all clean help w3lib
 
-all: wgrib Read_NLDAS
+all: wgrib read_nldas
 
-Read_NLDAS: $(OBJS)
+read_nldas: $(OBJS)
 	$(CC) $(CFLAGS) -o $(EXECUTABLE) $(OBJS) $(LIBS)
 
 wgrib:
