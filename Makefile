@@ -3,9 +3,9 @@ CFLAGS = -g -O0
 
 SRCDIR = ./src
 LIBS = -lm
-SRCS_ = Read_NLDAS.c
+SRCS_ = read_nldas.c
 
-EXECUTABLE = Read_NLDAS
+EXECUTABLE = ReadNLDAS
 
 SRCS = $(patsubst %,$(SRCDIR)/%,$(SRCS_))
 OBJS = $(SRCS:.c=.o)
