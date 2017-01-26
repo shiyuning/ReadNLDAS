@@ -45,6 +45,7 @@ INSTRUCTION:
    If a model parameter is not provided, the default format is PIHM forcing format.
 
     **EXAMPLE:**
+    
     If you want to read the forcing from Jan 1 2009 to Feb 1 2009 at 40.6125N, 78.1408W and produce forcing for Cycles, you run
     
     ```
