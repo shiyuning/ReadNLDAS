@@ -21,7 +21,6 @@ INSTRUCTION:
      ```
   
      `YYYY` indicates the year of data that you want to download.
-  
     2. Extract the grib files:
      
      The downloaded NLDAS-2 forcing files are in grib format. The bash script `extract_nldas.sh` will extract the grib files and write the NLDAS-2 forcing fields into seperate binary files to build your data inventory.
