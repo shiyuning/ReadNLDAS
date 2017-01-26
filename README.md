@@ -13,22 +13,21 @@ INSTRUCTION:
 
 2. Build NLDAS-2 data inventory:
     1. Download NLDAS-2 forcing data:
-
-     The bash script `dl_nldas.sh` will download a whole year's NLDAS-2 forcing data into the Data directory.
-     The syntax is:
-     ```shell
-     $ ./dl_nldas.sh YYYY
-     ```
-     `YYYY` indicates the year of data that you want to download.
-     
+    The bash script `dl_nldas.sh` will download a whole year's NLDAS-2 forcing data into the Data directory.
+    The syntax is:
+    ```shell
+    $ ./dl_nldas.sh YYYY
+    ```
+    `YYYY` indicates the year of data that you want to download.
+    
     2. Extract the grib files:
      
-     The downloaded NLDAS-2 forcing files are in grib format. The bash script `extract_nldas.sh` will extract the grib files and write the NLDAS-2 forcing fields into seperate binary files to build your data inventory.
-     The syntax is:
-     ```shell
-     $ ./extract_nldas YYYY
-     ```
-     `YYYY` indicates the year of data that you want to extract.
+    The downloaded NLDAS-2 forcing files are in grib format. The bash script `extract_nldas.sh` will extract the grib files and write the NLDAS-2 forcing fields into seperate binary files to build your data inventory.
+    The syntax is:
+    ```shell
+    $ ./extract_nldas YYYY
+    ```
+    `YYYY` indicates the year of data that you want to extract.
 
 3. Read NLDAS-2 forcing inventory and build forcing file: 
 
