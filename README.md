@@ -26,6 +26,7 @@ INSTRUCTION:
         The downloaded NLDAS-2 forcing files are in grib format. The bash script `extract_nldas.sh` will extract the grib files and write the NLDAS-2 forcing fields into seperate binary files to build your data inventory.
         
         The syntax is:
+        
         ```
         $ ./extract_nldas YYYY
         ```
@@ -44,14 +45,16 @@ INSTRUCTION:
    If a model parameter is not provided, the default format is PIHM forcing format.
 
     **EXAMPLE:**
-    
     If you want to read the forcing from Jan 1 2009 to Feb 1 2009 at 40.6125N, 78.1408W and produce forcing for Cycles, you run
+    
     ```
     $ ./read_nldas --start 2009-01-01 --end 2009-02-01 --lat 40.6125 --lon -78.1408 --model Cycles
     ```
+    
     Note that W longitude is negative.
 
     Alternatively, if you want to read a whole year's forcing data, you can run
+    
     ```
     $ ./read_nldas --year 2009 --lat 40.6125 --lon -78.1408 --model Cycles
     ```
