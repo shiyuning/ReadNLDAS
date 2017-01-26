@@ -16,7 +16,7 @@ INSTRUCTION:
         The bash script `dl_nldas.sh` will download a whole year's NLDAS-2 forcing data into the Data directory.
         The syntax is:
         
-        ```
+        ```shell
         $ ./dl_nldas.sh YYYY
         ```
         
@@ -27,7 +27,7 @@ INSTRUCTION:
         
         The syntax is:
         
-        ```
+        ```shell
         $ ./extract_nldas YYYY
         ```
         
@@ -38,7 +38,7 @@ INSTRUCTION:
     This step will read the data inventory you built using `wgrib` and produce meteorology forcing data.
     The program will look into the NLDAS-2 forcing data and retrieve the time series from the nearest NLDAS grid to your desired lat/lon location.
     
-   ```
+   ```shell
    $ ./read_nldas --start YYYY-MM-DD --end YYYY-MM-DD [--year YYYY] --lat LAT --lon LON [--model MODEL]
    ```
    
