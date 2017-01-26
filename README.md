@@ -19,7 +19,6 @@ INSTRUCTION:
      ```shell
      $ ./dl_nldas.sh YYYY
      ```
-  
      `YYYY` indicates the year of data that you want to download.
     2. Extract the grib files:
      
