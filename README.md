@@ -1,9 +1,11 @@
 Read NLDAS
 ==========
 
-Tools to download and extract NLDAS-2 forcing data for land surface hydrologic simulations.
+Tools to ~~download~~ and extract NLDAS-2 forcing data for land surface hydrologic simulations.
 
 Contact: Yuning Shi [(Send Email)](mailto:yshi@psu.edu)
+
+NOTE: [NASA stopped FTP support](https://disc.sci.gsfc.nasa.gov/alerts/access-to-ges-disc-data-will-require-all-users-to-be-registered-with-the-earthdata-login-system) so the download script will no longer work.
 
 
 INSTRUCTION:
